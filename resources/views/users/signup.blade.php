@@ -1,5 +1,10 @@
 @extends('layouts.auth')
 @section('content')
+<style>
+.error_controlx{
+    color: red;
+}
+</style>
 <div class="sufee-login d-flex align-content-center flex-wrap">
     <div class="container">
         <div class="login-content">
@@ -9,19 +14,36 @@
                 </a>
             </div>
             <div class="login-form">
-                <form>
+                {{ Form::model($users, array('url'=>url('users/post_signup'), 'method' => 'POST','class'=>'tm-form tm-contactform3','files'=>true,'id'=>'tm-contactform')) }}
                     <div class="form-group">
-                        <label>User Name</label>
-                        <input type="email" class="form-control" placeholder="User Name">
+                        <label>First Name</label>
+                        {{ Form::text('firstname', old('firstname') , array('class'=>'form-control','placeholder'=>'First Name*'))}}
+                            <span class='error_controlx'><?php if ($errors->has('firstname')){
+                                echo $errors->first('firstname');
+                            }?></span>
                     </div>
                     <div class="form-group">
-                        <label>Email address</label>
-                        <input type="email" class="form-control" placeholder="Email">
+                        <label>last Name</label>
+                        {{ Form::text('lastname', old('lastname') , array('class'=>'form-control','placeholder'=>'Last Name*'))}}
+                            <span class='error_controlx'><?php if ($errors->has('lastname')){
+                                echo $errors->first('lastname');
+                            }?></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        {{ Form::text('email', old('email') , array('class'=>'form-control','placeholder'=>'Email'))}}
+                            <span class='error_controlx'><?php if ($errors->has('email')){
+                                echo $errors->first('email');
+                            }?></span>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" class="form-control" placeholder="Password">
+                        {{ Form::password('password' , array('class'=>'form-control','placeholder'=>'Password'))}}
+                            <span class='error_controlx'><?php if ($errors->has('password')){
+                                echo $errors->first('password');
+                            }?></span>
                     </div>
+                   
                     <div class="checkbox">
                         <label>
                             <input type="checkbox"> Agree the terms and policy
@@ -37,7 +59,7 @@
                     <div class="register-link m-t-15 text-center">
                         <p>Already have account ? <a href="<?php echo url('/users/login');?>"> Sign in</a></p>
                     </div>
-                </form>
+                    {!! Form::close() !!}
             </div>
         </div>
     </div>

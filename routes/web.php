@@ -25,5 +25,8 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('users/login', [App\Http\Controllers\UsersController::class, 'login']);
     Route::get('users/forgotpassword', [App\Http\Controllers\UsersController::class, 'forgotpassword']);
     Route::get('users/signup', [App\Http\Controllers\UsersController::class, 'signup']);
+
+    Route::post('users/post_signup', [App\Http\Controllers\UsersController::class, 'post_signup']);
+    
     
 });
