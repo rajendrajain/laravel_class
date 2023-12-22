@@ -1,10 +1,5 @@
 @extends('layouts.auth')
 @section('content')
-<style>
-.error_controlx{
-    color: red;
-}
-</style>
 <div class="sufee-login d-flex align-content-center flex-wrap">
     <div class="container">
         <div class="login-content">

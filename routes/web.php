@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::group(['middleware' => ['auth:web']], function () {
-
+    Route::get('users/dashboard', [App\Http\Controllers\UsersController::class, 'dashboard']);
 });
 Route::group(['middleware' => ['guest']], function () {
     Route::get('users/login', [App\Http\Controllers\UsersController::class, 'login']);
@@ -27,6 +27,7 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('users/signup', [App\Http\Controllers\UsersController::class, 'signup']);
 
     Route::post('users/post_signup', [App\Http\Controllers\UsersController::class, 'post_signup']);
+    Route::post('users/login_post', [App\Http\Controllers\UsersController::class, 'login_post']);
     
     
 });
