@@ -15,13 +15,16 @@ use Illuminate\Support\Facades\Route;
 
 //Route::get('user/updatehead', [App\Http\Controllers\UserController::class, 'updatehead']);
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 Route::group(['middleware' => ['auth:web']], function () {
     Route::get('users/dashboard', [App\Http\Controllers\UsersController::class, 'dashboard']);
+
+    Route::get('users/manageusers', [App\Http\Controllers\UsersController::class, 'manageusers']);
 });
 Route::group(['middleware' => ['guest']], function () {
+    Route::get('/', [App\Http\Controllers\UsersController::class, 'login']);
     Route::get('users/login', [App\Http\Controllers\UsersController::class, 'login']);
     Route::get('users/forgotpassword', [App\Http\Controllers\UsersController::class, 'forgotpassword']);
     Route::get('users/signup', [App\Http\Controllers\UsersController::class, 'signup']);

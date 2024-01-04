@@ -17,6 +17,7 @@ class UsersController extends Controller{
 
     public function login_post(Request $request){
         $data = $request->input();
+        //echo '<pre>';print_r($data);echo '</pre>';exit;
         $validator =  Validator::make($data, [
             'email' => 'required',
             'password'=>'required'
@@ -81,6 +82,14 @@ class UsersController extends Controller{
         $data = array();
        
         return view('users.dashboard',$data);
+    }
+
+    public function manageusers(){
+        $data = array();
+        $users = Users::orderby('firstname','asc')->orderby('lastname','asc')->get();
+        //echo '<pre>';print_r($users);echo '</pre>';exit;
+        $data['users'] = $users;
+        return view('users.manageusers',$data);
     }
 }
 ?>
