@@ -22,6 +22,10 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('users/dashboard', [App\Http\Controllers\UsersController::class, 'dashboard']);
 
     Route::get('users/manageusers', [App\Http\Controllers\UsersController::class, 'manageusers']);
+    Route::get('users/view/{str}', [App\Http\Controllers\UsersController::class, 'view']);
+    Route::get('users/edit/{str}', [App\Http\Controllers\UsersController::class, 'edit']);
+    Route::post('users/post_edit/{str}', [App\Http\Controllers\UsersController::class, 'post_edit']);
+    
 });
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/', [App\Http\Controllers\UsersController::class, 'login']);

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Session;
 use Response;
 use App\Models\Users;
+use App\Models\UserTypes;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller{
@@ -86,10 +87,49 @@ class UsersController extends Controller{
 
     public function manageusers(){
         $data = array();
-        $users = Users::orderby('firstname','asc')->orderby('lastname','asc')->get();
+        $users = Users::with(array('userType'))->orderby('firstname','asc')->orderby('lastname','asc')->get();
         //echo '<pre>';print_r($users);echo '</pre>';exit;
         $data['users'] = $users;
         return view('users.manageusers',$data);
+    }
+
+    public function view($str){
+        $id = $this->decodestr($str);
+        $data = array();
+        $users = Users::where('id',$id)->with(array('userType'))->first();
+        //echo '<pre>';print_r($users);echo '</pre>';exit;
+        $data['users'] = $users;
+        return view('users.view',$data);
+    }
+
+    public function edit($str){
+        $id = $this->decodestr($str);
+        $data = array();
+        $users = Users::where('id',$id)->with(array('userType'))->first();
+        $usertypes = UserTypes::orderBy('name')->pluck('name', 'id')->toArray();
+        //echo '<pre>';print_r($usertypes);echo '</pre>';exit;
+        $data['users'] = $users;
+        $data['usertypes'] = array('--Select--')+$usertypes;
+        $data['str'] = $str;
+        return view('users.edit',$data);
+    }
+
+    public function post_edit(Request $request, $str){
+        $id = $this->decodestr($str);
+        $data = $request->input();
+        $validator =  Validator::make($data, [
+            'firstname'=>'required',
+            'lastname'=>'required',
+            'email' => 'required|email|max:255|unique:users,email,'.$id,
+        ]);
+        if ($validator->fails()) {
+            return redirect('/users/edit/'.$str)
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+        $users = Users::where('id',$id)->first();
+        $users->update($request->all());
+        return redirect('users/view/'.$str)->with('success','Your record has been save success fully.');
     }
 }
 ?>

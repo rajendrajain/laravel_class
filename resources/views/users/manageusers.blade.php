@@ -33,9 +33,9 @@
                                                     <td><?php echo $user->registration_no?></td>
                                                     <td class="avatar"></td>
                                                     <td><?php echo $user->firstname.' '.$user->lastname?></td>
-                                                    <td>User Type</td>
+                                                    <td><?php echo $user->userType->name?></td>
                                                     <td><?php echo $user->email?></td>
-                                                    <td>Phone</td>
+                                                    <td></td>
                                                     <td>
                                                         <?php 
                                                             if($user->is_active == 1){
@@ -46,7 +46,7 @@
                                                     <td>
                                                         <a href="<?php echo url('/users/view/'.base64_encode(base64_encode($user->id)));?>"> View </a> | 
                                                         <a href="<?php echo url('/users/edit/'.base64_encode(base64_encode($user->id)));?>"> Edit </a> | 
-                                                         <a href="<?php echo url('/users/delete/'.base64_encode(base64_encode($user->id)));?>"> Delete </a>
+                                                        <a href="<?php echo url('/users/delete/'.base64_encode(base64_encode($user->id)));?>"> Delete </a>
                                                     </td>
                                                 </tr>
                                             <?php }?>

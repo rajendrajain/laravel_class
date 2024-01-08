@@ -22,8 +22,8 @@ class Users extends Model
 		'updated_at'
 	];
     
-    public function group(){
-        return $this->belongsTo('App\Models\Groups', 'group_id', 'id');
+    public function userType(){
+        return $this->belongsTo('App\Models\UserTypes', 'user_type_id', 'id');
     }
 
     
