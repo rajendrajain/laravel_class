@@ -25,6 +25,9 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('users/view/{str}', [App\Http\Controllers\UsersController::class, 'view']);
     Route::get('users/edit/{str}', [App\Http\Controllers\UsersController::class, 'edit']);
     Route::post('users/post_edit/{str}', [App\Http\Controllers\UsersController::class, 'post_edit']);
+
+    Route::get('users/profile/{str}', [App\Http\Controllers\UsersController::class, 'profile']);
+    Route::post('users/post_profile/{str}', [App\Http\Controllers\UsersController::class, 'post_profile']);
     
 });
 Route::group(['middleware' => ['guest']], function () {

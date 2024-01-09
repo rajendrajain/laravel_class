@@ -5,6 +5,7 @@ use Session;
 use Response;
 use App\Models\Users;
 use App\Models\UserTypes;
+use App\Models\Profile;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller{
@@ -97,7 +98,9 @@ class UsersController extends Controller{
         $id = $this->decodestr($str);
         $data = array();
         $users = Users::where('id',$id)->with(array('userType'))->first();
-        //echo '<pre>';print_r($users);echo '</pre>';exit;
+        $profile = Profile::where('user_id',$id)->with(array('Users'))->first();
+        $data['profile'] = $profile;
+        //echo '<pre>';print_r($profile);echo '</pre>';exit;
         $data['users'] = $users;
         return view('users.view',$data);
     }
@@ -129,6 +132,38 @@ class UsersController extends Controller{
         }
         $users = Users::where('id',$id)->first();
         $users->update($request->all());
+        return redirect('users/view/'.$str)->with('success','Your record has been save success fully.');
+    }
+
+
+    public function profile($str){
+        $data = array();
+        $id = $this->decodestr($str);
+        $profile = Profile::where('user_id',$id)->with(array('Users'))->first();
+        $data['profile'] = $profile;
+        $data['str'] = $str;
+        return view('users.profile',$data);
+    }
+
+    public function post_profile(Request $request, $str){
+        $id = $this->decodestr($str);
+        $data = $request->input();
+        $Profile = Profile::where('user_id',$id)->first();
+        if(isset($Profile->id) and $Profile->id != ''){
+            $Profile->update($request->all());
+        }else{
+            $Profile = Profile::create($request->all());
+        }
+        $logo = $request->file('pic');
+        if(!empty($logo)){
+            $logo_img = time().'.'.$logo->getClientOriginalExtension();
+            $destinationPath = public_path('/uploads/users');
+            $logo->move($destinationPath, $logo_img);
+            $Profile->pic = $logo_img;
+            
+        }
+        $Profile->user_id = $id;
+        $Profile->save();
         return redirect('users/view/'.$str)->with('success','Your record has been save success fully.');
     }
 }
