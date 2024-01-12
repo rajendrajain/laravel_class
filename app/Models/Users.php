@@ -26,5 +26,13 @@ class Users extends Model
         return $this->belongsTo('App\Models\UserTypes', 'user_type_id', 'id');
     }
 
+    public function Profile(){
+        return $this->hasOne('App\Models\Profile', 'user_id', 'id');
+    }
+
+    public function Experince(){
+        return $this->hasMany('App\Models\Experince', 'user_id', 'id');
+    }
+
     
 }

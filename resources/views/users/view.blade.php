@@ -8,6 +8,20 @@
                     <h4>User Details</h4>
                 </div>
                 <div class="card-body">
+                    <div>
+                        @if ($message = Session::get('success'))
+                            <div class="alert alert-success alert-block">
+                                <button type="button" class="close" data-dismiss="alert">×</button>	
+                                <strong>{{ $message }}</strong>
+                            </div>
+                        @endif
+                        @if ($message = Session::get('error'))
+                            <div class="alert alert-danger alert-block">
+                                <button type="button" class="close" data-dismiss="alert">×</button>	
+                                <strong>{{ $message }}</strong>
+                            </div>
+                        @endif
+                    </div>
                     <div class="default-tab">
                         <nav>
                             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -35,7 +49,9 @@
                             </div>
                            
                             <div class="tab-pane fade" id="nav-exprince" role="tabpanel" aria-labelledby="nav-exprince-tab">
-                                <p>3</p>
+                                <div class="table-stats">
+                                    @include('users.partials._exprience')
+                                </div>
                             </div>
 
 

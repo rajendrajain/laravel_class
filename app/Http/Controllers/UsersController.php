@@ -6,6 +6,7 @@ use Response;
 use App\Models\Users;
 use App\Models\UserTypes;
 use App\Models\Profile;
+use App\Models\Experince;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller{
@@ -80,6 +81,12 @@ class UsersController extends Controller{
 		
     }
 
+    public function logout(){
+        Session::flush();
+        Auth::logout();
+        return redirect('/users/login');
+    }
+
     public function dashboard(){
         $data = array();
        
@@ -97,10 +104,8 @@ class UsersController extends Controller{
     public function view($str){
         $id = $this->decodestr($str);
         $data = array();
-        $users = Users::where('id',$id)->with(array('userType'))->first();
-        $profile = Profile::where('user_id',$id)->with(array('Users'))->first();
-        $data['profile'] = $profile;
-        //echo '<pre>';print_r($profile);echo '</pre>';exit;
+        $users = Users::where('id',$id)->with(array('userType','Profile','Experince'))->first();
+        //echo '<pre>';print_r($users);echo '</pre>';exit;
         $data['users'] = $users;
         return view('users.view',$data);
     }
@@ -165,6 +170,84 @@ class UsersController extends Controller{
         $Profile->user_id = $id;
         $Profile->save();
         return redirect('users/view/'.$str)->with('success','Your record has been save success fully.');
+    }
+
+    public function exprience($str){
+        $data = array();
+        $id = $this->decodestr($str);
+        $Experince = new Experince();
+        $data['Experince'] = $Experince;
+        $data['str'] = $str;
+        return view('users.exprience',$data);
+    }
+
+    public function post_exprience(Request $request, $str){
+        $id = $this->decodestr($str);
+        $data = $request->input();
+        $validator =  Validator::make($data, [
+            'company'=>'required',
+            'profile'=>'required',
+            'start_date' => 'required',
+            'comment' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect('/users/exprience/'.$str)
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+
+        $Experince = Experince::create($request->all());
+        $Experince->user_id = $id;
+        $Experince->save();
+        return redirect('users/view/'.$str)->with('success','Your record has been save success fully.');
+    }
+
+    public function view_experince($str){
+        $id = $this->decodestr($str);
+        $Experince = Experince::where('id',$id)->first();
+        $data = array();
+        $data['Experince'] = $Experince;
+        return view('users.view_experince',$data);
+    }
+
+    public function edit_experince($id){
+        $Experince_id = $this->decodestr($id);
+        $Experince = Experince::where('id',$Experince_id)->first();
+        $data = array();
+        $data['Experince'] = $Experince;
+        $data['id'] = $id;
+        return view('users.edit_experince',$data);
+    }
+
+    public function post_edit_experince(Request $request, $id){
+        $Experince_id = $this->decodestr($id);
+        $data = $request->input();
+        $validator =  Validator::make($data, [
+            'company'=>'required',
+            'profile'=>'required',
+            'start_date' => 'required',
+            'comment' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect('/users/exprience/'.$id)
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+
+        $Experince = Experince::where('id',$Experince_id)->first();
+        $Experince->update($request->all());
+        return redirect('users/view/'.base64_encode(base64_encode($Experince->user_id)))->with('success','Your record has been save success fully.');
+    }
+
+    public function delete_experince($id){
+        $Experince_id = $this->decodestr($id);
+        $Experince = Experince::where('id',$Experince_id)->first();
+        if(isset($Experince->id) and $Experince->id !=''){
+            $Experince->delete();
+            return redirect('users/view/'.base64_encode(base64_encode($Experince->user_id)))->with('success','Your record has been deleted successfully.');
+        }else{
+            return redirect('users/view/'.base64_encode(base64_encode($Experince->user_id)))->with('error','Sorry! unable to delete record');
+        }
     }
 }
 ?>

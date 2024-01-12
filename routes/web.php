@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::group(['middleware' => ['auth:web']], function () {
     Route::get('users/dashboard', [App\Http\Controllers\UsersController::class, 'dashboard']);
-
+    Route::get('home', [App\Http\Controllers\UsersController::class, 'dashboard']);
     Route::get('users/manageusers', [App\Http\Controllers\UsersController::class, 'manageusers']);
     Route::get('users/view/{str}', [App\Http\Controllers\UsersController::class, 'view']);
     Route::get('users/edit/{str}', [App\Http\Controllers\UsersController::class, 'edit']);
@@ -28,6 +28,16 @@ Route::group(['middleware' => ['auth:web']], function () {
 
     Route::get('users/profile/{str}', [App\Http\Controllers\UsersController::class, 'profile']);
     Route::post('users/post_profile/{str}', [App\Http\Controllers\UsersController::class, 'post_profile']);
+    Route::get('users/logout', [App\Http\Controllers\UsersController::class, 'logout']);
+    Route::get('users/exprience/{str}', [App\Http\Controllers\UsersController::class, 'exprience']);
+    Route::post('users/post_exprience/{str}', [App\Http\Controllers\UsersController::class, 'post_exprience']);
+    Route::get('users/view_experince/{str}', [App\Http\Controllers\UsersController::class, 'view_experince']);
+
+    Route::get('users/edit_experince/{id}', [App\Http\Controllers\UsersController::class, 'edit_experince']);
+    Route::post('users/post_edit_experince/{id}', [App\Http\Controllers\UsersController::class, 'post_edit_experince']);
+
+    Route::get('users/delete_experince/{id}', [App\Http\Controllers\UsersController::class, 'delete_experince']);
+    
     
 });
 Route::group(['middleware' => ['guest']], function () {
