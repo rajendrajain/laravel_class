@@ -37,8 +37,13 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::post('users/post_edit_experince/{id}', [App\Http\Controllers\UsersController::class, 'post_edit_experince']);
 
     Route::get('users/delete_experince/{id}', [App\Http\Controllers\UsersController::class, 'delete_experince']);
-    
-    
+    Route::get('users/createuser', [App\Http\Controllers\UsersController::class, 'createuser']);
+    Route::post('users/post_createuser', [App\Http\Controllers\UsersController::class, 'post_createuser']);
+    Route::get('users/attendance', [App\Http\Controllers\UsersController::class, 'attendance']);
+
+    Route::get('users/fillattendance', [App\Http\Controllers\UsersController::class, 'fillattendance']);
+    Route::post('users/post_fillattendance', [App\Http\Controllers\UsersController::class, 'post_fillattendance']);
+
 });
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/', [App\Http\Controllers\UsersController::class, 'login']);

@@ -7,6 +7,8 @@ use App\Models\Users;
 use App\Models\UserTypes;
 use App\Models\Profile;
 use App\Models\Experince;
+use App\Models\AttendanceDay;
+use App\Models\Attendance;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller{
@@ -95,7 +97,7 @@ class UsersController extends Controller{
 
     public function manageusers(){
         $data = array();
-        $users = Users::with(array('userType'))->orderby('firstname','asc')->orderby('lastname','asc')->get();
+        $users = Users::with(array('userType'))->orderby('registration_no','asc')->get();
         //echo '<pre>';print_r($users);echo '</pre>';exit;
         $data['users'] = $users;
         return view('users.manageusers',$data);
@@ -248,6 +250,119 @@ class UsersController extends Controller{
         }else{
             return redirect('users/view/'.base64_encode(base64_encode($Experince->user_id)))->with('error','Sorry! unable to delete record');
         }
+    }
+
+    
+    public function createuser(){
+        $data = array();
+        $usertypes = UserTypes::orderBy('name')->pluck('name', 'id')->toArray();
+        $data['users'] = new Users();
+        $data['usertypes'] = array('--Select--')+$usertypes;
+        return view('users.createuser',$data);
+    }
+
+    public function post_createuser(Request $request){
+       // echo '<pre>';print_r($request->input());echo '</pre>';exit;
+       $data = $request->input();
+        $validator =  Validator::make($data, [
+            'firstname'=>'required',
+            'lastname'=>'required',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password'=>'required'
+        ]);
+        if ($validator->fails()) {
+            return redirect('/users/createuser')
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+        $order = Users::orderby('registration_no','desc')->first();
+        $registration_no = $order->registration_no+1;
+        $users = Users::create($request->all());
+        if($users){
+            $users->password = bcrypt($request->input('password'));
+            $users->registration_no = $registration_no;
+            $users->save();
+            //bcrypt
+            return redirect('users/manageusers')->with('success','Thanks you for your interest.');
+        }
+    }
+
+    public function attendance(){
+        $data = array();
+        //$users = Users::with(array('userType'))->orderby('registration_no','asc')->get();
+        
+        $attendances = AttendanceDay::with(array('attendaceTakenBy'))->orderby('attendance_date','desc')->get();
+        //echo '<pre>';print_r($attendances);exit;
+        $data['attendances'] =$attendances;
+        return view('users.attendance',$data);
+    }
+
+    public function fillattendance(){
+        $data = array();
+        $users = Users::orderBy('firstname','asc')->orderBy('lastname', 'asc')->get();
+        $AttendanceDay = new AttendanceDay();
+        //echo '<pre>';print_r($users);echo '</pre>';exit;
+        $data['users'] =$users;
+        $data['AttendanceDay'] =$AttendanceDay;
+        return view('users.fillattendance',$data);
+    }
+
+    public function post_fillattendance(Request $request){
+        $data = $request->input();
+        $validator =  Validator::make($data, [
+            'attendance_date' => 'required|unique:attendance_days,attendance_date',
+        ]);
+        if ($validator->fails()) {
+            return redirect('/users/fillattendance')
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+        $attendance_day = new AttendanceDay;
+        $attendance_day->attendance_date = $data['attendance_date'];
+        $attendance_day->attendance_taken_by_id = auth()->user()->id;
+        
+
+        $uncheckall = 0;
+        $checkall = 0;
+        if(isset($data['checkall']) and $data['checkall'] !=''){
+            $checkall = substr($data['checkall'],0,-1);
+            $checkalls = explode(',',$checkall);
+            $checkall = count($checkalls);
+            //echo '<pre>';print_r($checkalls);echo '</pre>';
+        }
+        if(isset($data['uncheckall']) and $data['uncheckall'] !=''){
+            $uncheckall = substr($data['uncheckall'],0,-1);
+            $uncheckalls = explode(',',$uncheckall);
+            $uncheckall = count($uncheckalls);
+            //echo '<pre>';print_r($uncheckalls);echo '</pre>';
+        }
+        $attendance_day->total_present = $checkall;
+        $attendance_day->total_absent = $uncheckall;
+        $attendance_day->save();
+        $attendance_day_id = $attendance_day->id;
+        if(isset($checkalls) and !empty($checkalls)){
+            foreach($checkalls as $checkall){
+                $Attendance = new Attendance();
+                $Attendance->user_id = $checkall;
+                $Attendance->attendance_day_id = $attendance_day_id;
+                $Attendance->is_present = 1;
+                $Attendance->attendence = date('Y-m-d');
+                $Attendance->save();
+            }
+        }
+        if(isset($uncheckalls) and !empty($uncheckalls)){
+            foreach($uncheckalls as $uncheckall){
+                $Attendance = new Attendance();
+                $Attendance->user_id = $checkall;
+                $Attendance->attendance_day_id = $attendance_day_id;
+                $Attendance->is_present = 0;
+                $Attendance->attendence = date('Y-m-d');
+                $Attendance->save();
+            }
+        }
+        return redirect('users/attendance')->with('success','Attendance has been filled.');
+        //echo '<pre>';print_r($data);echo '</pre>';exit;
+
     }
 }
 ?>

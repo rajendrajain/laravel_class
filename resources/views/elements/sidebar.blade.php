@@ -11,6 +11,7 @@
                     <ul class="sub-menu children dropdown-menu">                            
                         <li><i class="fa fa-puzzle-piece"></i><a href="<?php echo url('/users/manageusers');?>">Manage Users</a></li>
                         <li><i class="fa fa-id-badge"></i><a href="<?php echo url('/users/createuser');?>">Create User</a></li>
+                        <li><i class="fa fa-id-badge"></i><a href="<?php echo url('/users/attendance');?>">Attendance</a></li>
                     </ul>
                 </li>
                 <li class="menu-item-has-children dropdown">

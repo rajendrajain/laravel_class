@@ -85,7 +85,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>DoM</label>
-                                        {{ Form::text('dom', old('dom') , array('class'=>'form-control'))}}
+                                        {{ Form::text('dom', old('dom') , array('class'=>'form-control datepicker'))}}
                                             <span class='error_controlx'><?php if ($errors->has('dom')){
                                                 echo $errors->first('dom');
                                             }?></span>
@@ -133,6 +133,7 @@
     <!-- .animated -->
 </div>
 <script>
+   
     function changeimg(input){
         var file = $("input[type=file]").get(0).files[0];
  
